@@ -107,8 +107,8 @@ public class IiiIIiIii_Class204 extends ii_Class4 implements iIIiIIiIi_Class294 
 
       if (var2) {
          IIiIIi_Class10 var5 = IIiIiI_Class11.ii_field_857c0621.I_method_3a2d5e3(20.0F);
-         float var6 = var5.I_method_2c375926("velocity.");
-         var1.drawText(var5, "velocity.", var3 - var6 / 2.0F, var4 - 118.0F, ColorRGBA.WHITE);
+         float var6 = var5.I_method_2c375926("daamky.");
+         var1.drawText(var5, "daamky.", var3 - var6 / 2.0F, var4 - 118.0F, ColorRGBA.WHITE);
 
          IIiIIi_Class10 var7 = IIiIiI_Class11.I_field_857c0621.I_method_3a2d5e3(12.0F);
          String var8 = I_greeting() + ", " + I_field_3a9bda27.getSession().getUsername();
@@ -116,7 +116,7 @@ public class IiiIIiIii_Class204 extends ii_Class4 implements iIIiIIiIi_Class294 
          var1.drawText(var7, var8, var3 - var9 / 2.0F, var4 - 88.0F, new ColorRGBA(210.0F, 210.0F, 215.0F));
 
          IIiIIi_Class10 var10 = IIiIiI_Class11.II_field_857c0621.I_method_3a2d5e3(8.0F);
-         String var11 = "Добро пожаловать в Daamky — лучший Minecraft-клиент.";
+         String var11 = "Добро пожаловать в daamky — лучший бесплатный Minecraft-клиент.";
          float var12 = var10.I_method_2c375926(var11);
          var1.drawText(var10, var11, var3 - var12 / 2.0F, var4 - 74.0F, new ColorRGBA(130.0F, 131.0F, 135.0F));
       }
@@ -127,8 +127,8 @@ public class IiiIIiIii_Class204 extends ii_Class4 implements iIIiIIiIi_Class294 
       if (var2) {
          IIiIIi_Class10 var13 = IIiIiI_Class11.II_field_857c0621.I_method_3a2d5e3(6.0F);
          float var14 = this.height - 24.0F;
-         String var15 = "Используя Daamky, вы соглашаетесь с условиями использования";
-         String var16 = "и политикой конфиденциальности.";
+         String var15 = "Спасибо за помощь в разработке: Xevix1m <3, forestmorn.";
+         String var16 = "M******2 и другие";
          var1.drawCenteredText(var13, var15, var3, var14, new ColorRGBA(55.0F, 56.0F, 60.0F));
          var1.drawCenteredText(var13, var16, var3, var14 + 9.0F, new ColorRGBA(55.0F, 56.0F, 60.0F));
       }
