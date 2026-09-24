@@ -1,0 +1,23 @@
+{
+  "clickgui_open": {
+    "sounds": ["clickgui_open"]
+  },
+  "toggle": {
+    "sounds": ["toggle"]
+  },
+  "applepay": {
+    "sounds": ["applepay"]
+  },
+  "notification": {
+    "sounds": ["notification"]
+  },
+  "welcome": {
+    "sounds": ["welcome"]
+  },
+  "typing": {
+    "sounds": ["typing"]
+  },
+  "critical": {
+    "sounds": ["critical"]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "totem.xylophone": {
+    "sounds": [
+      { "name": "daamky:totem/xylophone", "stream": false }
+    ]
+  },
+  "totem.bro9i": {
+    "sounds": [
+      { "name": "daamky:totem/bro9i", "stream": false }
+    ]
+  },
+  "totem.nothing": {
+    "sounds": [
+      { "name": "daamky:totem/nothing", "stream": false }
+    ]
+  }
+}
