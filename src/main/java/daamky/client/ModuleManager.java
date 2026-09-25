@@ -12,6 +12,7 @@ import pydaamky.events.render.HudRenderEvent;
 import pydaamky.events.window.KeyPressEvent;
 import pydaamky.events.window.MouseEvent;
 import daamky.client.AntiAimModule;
+import daamky.client.AuroraModule;
 import daamky.client.AssistModule;
 import daamky.client.AuctionModule;
 import daamky.client.F5NickModule;
@@ -201,6 +202,7 @@ public class ModuleManager {
         this.registerModule(new CriticalsModule());
         this.registerModule(new AutoSoupModule());
         this.registerModule(new AutoSprintModule());
+        this.registerModule(new AuroraModule());
         this.registerModule(new SuperFireworkModule());
         this.registerModule(new WebUtilsModule());
         this.registerModule(new StrafeModule());
