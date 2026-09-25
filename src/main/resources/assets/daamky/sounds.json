@@ -34,60 +34,39 @@
       "critical"
     ]
   },
-  "sounds/forestmorn/ezz": {
+  "forestmorn/ezz": {
     "sounds": [
-      {
-        "name": "daamky:sounds/forestmorn/ezz",
-        "stream": false
-      }
+      "forestmorn/ezz"
     ]
   },
-  "sounds/forestmorn/tuda": {
+  "forestmorn/tuda": {
     "sounds": [
-      {
-        "name": "daamky:sounds/forestmorn/tuda",
-        "stream": false
-      }
+      "forestmorn/tuda"
     ]
   },
-  "sounds/forestmorn/daamkyboost": {
+  "forestmorn/daamkyboost": {
     "sounds": [
-      {
-        "name": "daamky:sounds/forestmorn/daamkyboost",
-        "stream": false
-      }
+      "forestmorn/daamkyboost"
     ]
   },
-  "sounds/forestmorn/totem": {
+  "forestmorn/totem": {
     "sounds": [
-      {
-        "name": "daamky:sounds/forestmorn/totem",
-        "stream": false
-      }
+      "forestmorn/totem"
     ]
   },
-  "sounds/forestmorn/sinshluhi": {
+  "forestmorn/sinshluhi": {
     "sounds": [
-      {
-        "name": "daamky:sounds/forestmorn/sinshluhi",
-        "stream": false
-      }
+      "forestmorn/sinshluhi"
     ]
   },
-  "sounds/forestmorn/nespr": {
+  "forestmorn/nespr": {
     "sounds": [
-      {
-        "name": "daamky:sounds/forestmorn/nespr",
-        "stream": false
-      }
+      "forestmorn/nespr"
     ]
   },
-  "sounds/forestmorn/welcome": {
+  "forestmorn/welcome": {
     "sounds": [
-      {
-        "name": "daamky:sounds/forestmorn/welcome",
-        "stream": false
-      }
+      "forestmorn/welcome"
     ]
   }
 }
