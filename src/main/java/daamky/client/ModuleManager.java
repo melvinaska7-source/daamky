@@ -243,7 +243,7 @@ public class ModuleManager {
         this.registerModule(new AutoFarmModule());
         this.registerModule(new AutoInvisibleModule());
         this.registerModule(new ClickThroughModule());
-        this.registerModule(new CForestMornModule());
+        this.registerModule(new ForestMornModule());
         this.registerModule(new MineHelperModule());
         this.registerModule(new TargetPearlModule());
         this.registerModule(new StealerModule());
