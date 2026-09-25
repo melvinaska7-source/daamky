@@ -12,12 +12,12 @@ import ua.mintantileak.spk.Compile;
 
 /**
  * Кастомный звуковой пак "Forestmorn": ezz / tuda / daamkyboost / totem /
- * sinshluhi / nespr / welcome, лежат в assets/daamky/sounds/forestmorn/*.ogg
+ * sinshluhi / nespr / welcome, лежат в assets/daamky/sounds/forestmorn/ (ogg)
  * и зарегистрированы в assets/daamky/sounds.json как forestmorn/&lt;имя&gt;.
  *
  * Отдельный класс (не SoundsModule) специально: SoundsModule уже занят
- * встроенным войс-паком (kill.*/totem.*/start.*/leave.* — iiIIiiiIi_Class414 /
- * iiIiIIIII_Class417) и на него завязаны внешние классы (IiiIIiIii_Class204,
+ * встроенным войс-паком (kill, totem, start, leave — iiIIiiiIi_Class414
+ * и iiIiIIIII_Class417), и на него завязаны внешние классы (IiiIIiIii_Class204,
  * RocknetMenu, GlobalsMenuModule и т.д.) — переписывать его сломало бы сборку.
  */
 @ModuleInfo(
