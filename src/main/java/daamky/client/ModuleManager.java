@@ -14,6 +14,7 @@ import pydaamky.events.window.MouseEvent;
 import daamky.client.AntiAimModule;
 import daamky.client.AssistModule;
 import daamky.client.AuctionModule;
+import daamky.client.F5NickModule;
 import daamky.client.AutoAcceptModule;
 import daamky.client.AutoAuthModule;
 import daamky.client.AutoBuyModule;
@@ -226,6 +227,7 @@ public class ModuleManager {
         this.registerModule(new ViewModelModule());
         this.registerModule(new BlinkModule());
         this.registerModule(new InterfaceModule());
+        this.registerModule(new F5NickModule());
         this.registerModule(new TargetEspModule());
         this.registerModule(new StorageEspModule());
         this.registerModule(new XRayModule());
