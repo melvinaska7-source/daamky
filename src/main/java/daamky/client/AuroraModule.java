@@ -1,14 +1,9 @@
 package daamky.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.ProjectionType;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gl.Framebuffer;
-import net.minecraft.client.render.Camera;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fStack;
-import org.joml.Vector3f;
 import pydaamky.events.render.Render3DEvent;
 import pydaamky.utility.render.ColorRGBA;
 import pydaamky.utility.render.PyShader;
@@ -22,10 +17,13 @@ import ua.mintantileak.spk.Compile;
 )
 public class AuroraModule extends Module {
 
+    private final MinecraftClient I_field_3a9bda27 = MinecraftClient.getInstance();
+
     private SliderSetting intensity;
     private SliderSetting speed;
     private SliderSetting height;
     private SliderSetting spread;
+    private SliderSetting ripple;
     private ColorSetting colorA;
     private ColorSetting colorB;
     private BooleanSetting onlyNight;
@@ -40,7 +38,7 @@ public class AuroraModule extends Module {
         }
         ClientWorld world = I_field_3a9bda27.world;
 
-        if (onlyOverworld.i_method_9b12da03() && world.getDimension().hasSkyLight() == false) {
+        if (onlyOverworld.i_method_9b12da03() && !world.getDimension().hasSkyLight()) {
             return;
         }
         if (onlyNight.i_method_9b12da03()) {
@@ -89,6 +87,12 @@ public class AuroraModule extends Module {
             .II_method_b0f56334(0.05f)
             .Ii_method_4e0e6b54(1.0f);
 
+        ripple = new SliderSetting(this, "modules.settings.aurora.ripple")
+            .I_method_c8c9a7d7(0.0f)
+            .i_method_65e2aff7(2.0f)
+            .II_method_b0f56334(0.05f)
+            .Ii_method_4e0e6b54(0.8f);
+
         colorA = new ColorSetting(this, "modules.settings.aurora.color_a")
             .I_method_a62f5dd6(new ColorRGBA(40.0f, 255.0f, 120.0f, 255.0f));
 
@@ -117,17 +121,6 @@ public class AuroraModule extends Module {
     }
 
     private void drawAurora(Render3DEvent event) {
-        Framebuffer fb = I_field_3a9bda27.getFramebuffer();
-        if (fb == null) {
-            return;
-        }
-
-        int w = I_field_3a9bda27.getWindow().getFramebufferWidth();
-        int h = I_field_3a9bda27.getWindow().getFramebufferHeight();
-        if (w <= 0 || h <= 0) {
-            return;
-        }
-
         float inv = intensity.Ii_method_a20abcd2() / 100.0f;
         if (inv <= 0.001f) {
             return;
@@ -140,21 +133,11 @@ public class AuroraModule extends Module {
         shader.set("Speed", speed.Ii_method_a20abcd2());
         shader.set("Height", height.Ii_method_a20abcd2());
         shader.set("Spread", spread.Ii_method_a20abcd2());
+        shader.set("Ripple", ripple.Ii_method_a20abcd2());
         shader.set("ColorA", ca.getRed() / 255.0f, ca.getGreen() / 255.0f, ca.getBlue() / 255.0f);
         shader.set("ColorB", cb.getRed() / 255.0f, cb.getGreen() / 255.0f, cb.getBlue() / 255.0f);
 
-        Matrix4f invViewProj = new Matrix4f(event.getProjectionMatrix())
-            .mul(event.getPositionMatrix())
-            .invert();
-        shader.setMatrix("InvViewProj", invViewProj);
-
-        Camera camera = event.getCamera();
-        if (camera != null) {
-            Vector3f pos = camera.getPos().toVector3f();
-            shader.set("CamPos", pos.x, pos.y, pos.z);
-        }
-
-        // additive glow
+        // additive glow поверх мира
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(
             GlStateManager.SrcFactor.SRC_ALPHA,
@@ -164,11 +147,10 @@ public class AuroraModule extends Module {
         RenderSystem.disableDepthTest();
         RenderSystem.disableCull();
 
-        // fullscreen через PyShader (Time/Resolution выставятся в bind)
+        // fullscreen сам выставит Time/Resolution/InvViewProj/CamPos из event
         try {
             shader.fullscreen(event);
         } catch (Throwable t) {
-            // fallback: если fullscreen внутри сбросит blend — всё равно хоть что-то нарисует
             System.err.println("[Aurora] draw error: " + t.getMessage());
         } finally {
             RenderSystem.depthMask(true);
@@ -211,7 +193,7 @@ public class AuroraModule extends Module {
         """;
 
     // =========================================================================
-    //  FRAGMENT — дешёвое процедурное сияние (2 октавы hash-noise)
+    //  FRAGMENT — многослойное процедурное северное сияние (fbm-шум + волны)
     // =========================================================================
     private static final String AURORA_FRAGMENT = """
         #version 150
@@ -225,6 +207,7 @@ public class AuroraModule extends Module {
         uniform float Speed;
         uniform float Height;
         uniform float Spread;
+        uniform float Ripple;
         uniform vec3  ColorA;
         uniform vec3  ColorB;
         uniform mat4  InvViewProj;
@@ -250,7 +233,7 @@ public class AuroraModule extends Module {
         float fbm(vec2 p) {
             float v = 0.0;
             float a = 0.5;
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 4; i++) {
                 v += a * noise(p);
                 p = p * 2.03 + vec2(17.1, 9.7);
                 a *= 0.5;
@@ -266,12 +249,7 @@ public class AuroraModule extends Module {
         }
 
         void main() {
-            vec2 uv = vUV;
-            // PyShader fullscreen иногда отдаёт UV снизу-вверх
-            // если сияние окажется вверх ногами — раскомментируй:
-            // uv.y = 1.0 - uv.y;
-
-            vec3 rd = viewRay(uv);
+            vec3 rd = viewRay(vUV);
             float elev = rd.y;
 
             if (elev < 0.02) {
@@ -291,19 +269,28 @@ public class AuroraModule extends Module {
             float along = atan(dir.y, dir.x);
             float t = Time * Speed;
 
-            vec2 nUV = vec2(along * 1.6 * Spread, elev * 3.5 - t * 0.35);
+            // волнистые складки занавеса (реалистичные "ленты")
+            float fold = sin(along * 5.0 + t * 0.6) * Ripple * 0.25
+                       + sin(along * 11.0 - t * 0.9) * Ripple * 0.12;
+
+            vec2 nUV = vec2((along + fold) * 1.6 * Spread, elev * 3.2 - t * 0.35);
             float n1 = fbm(nUV);
             float n2 = fbm(nUV * 1.7 + vec2(t * 0.15, -t * 0.08));
+            float n3 = fbm(nUV * 3.1 + vec2(-t * 0.22, t * 0.05));
 
-            float curtain = n1 * 0.65 + n2 * 0.35;
-            curtain = pow(smoothstep(0.35, 0.85, curtain), 1.4);
+            float curtain = n1 * 0.55 + n2 * 0.3 + n3 * 0.15;
+            curtain = pow(smoothstep(0.32, 0.85, curtain), 1.3);
 
-            float band2 = pow(smoothstep(0.55, 0.9, fbm(nUV * 2.3 + 10.0)), 2.0) * 0.55;
-            float glow = (curtain + band2) * skyMask;
+            // вертикальные лучи-полосы внутри занавеса
+            float rays = pow(smoothstep(0.5, 0.95, fbm(vec2((along + fold) * 9.0, elev * 1.2 - t * 0.5))), 3.0) * 0.5;
 
-            float mixF = clamp(n2 * 1.2, 0.0, 1.0);
+            float band2 = pow(smoothstep(0.55, 0.9, fbm(nUV * 2.3 + 10.0)), 2.0) * 0.5;
+            float glow = (curtain + band2 + rays) * skyMask;
+
+            // цвет: у основания ColorA, к вершине подмешивается ColorB + лёгкое свечение
+            float mixF = clamp(elev / max(Height + 0.45, 0.01) + n2 * 0.3, 0.0, 1.0);
             vec3 col = mix(ColorA, ColorB, mixF);
-            col = mix(col, ColorB, smoothstep(0.15, 0.55, elev) * 0.35);
+            col = mix(col, vec3(1.0), rays * 0.25);
 
             glow *= 0.85 + 0.15 * sin(along * 4.0 + t);
 
