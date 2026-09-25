@@ -1,23 +1,93 @@
 {
   "clickgui_open": {
-    "sounds": ["clickgui_open"]
+    "sounds": [
+      "clickgui_open"
+    ]
   },
   "toggle": {
-    "sounds": ["toggle"]
+    "sounds": [
+      "toggle"
+    ]
   },
   "applepay": {
-    "sounds": ["applepay"]
+    "sounds": [
+      "applepay"
+    ]
   },
   "notification": {
-    "sounds": ["notification"]
+    "sounds": [
+      "notification"
+    ]
   },
   "welcome": {
-    "sounds": ["welcome"]
+    "sounds": [
+      "welcome"
+    ]
   },
   "typing": {
-    "sounds": ["typing"]
+    "sounds": [
+      "typing"
+    ]
   },
   "critical": {
-    "sounds": ["critical"]
+    "sounds": [
+      "critical"
+    ]
+  },
+  "sounds/forestmorn/ezz": {
+    "sounds": [
+      {
+        "name": "daamky:sounds/forestmorn/ezz",
+        "stream": false
+      }
+    ]
+  },
+  "sounds/forestmorn/tuda": {
+    "sounds": [
+      {
+        "name": "daamky:sounds/forestmorn/tuda",
+        "stream": false
+      }
+    ]
+  },
+  "sounds/forestmorn/daamkyboost": {
+    "sounds": [
+      {
+        "name": "daamky:sounds/forestmorn/daamkyboost",
+        "stream": false
+      }
+    ]
+  },
+  "sounds/forestmorn/totem": {
+    "sounds": [
+      {
+        "name": "daamky:sounds/forestmorn/totem",
+        "stream": false
+      }
+    ]
+  },
+  "sounds/forestmorn/sinshluhi": {
+    "sounds": [
+      {
+        "name": "daamky:sounds/forestmorn/sinshluhi",
+        "stream": false
+      }
+    ]
+  },
+  "sounds/forestmorn/nespr": {
+    "sounds": [
+      {
+        "name": "daamky:sounds/forestmorn/nespr",
+        "stream": false
+      }
+    ]
+  },
+  "sounds/forestmorn/welcome": {
+    "sounds": [
+      {
+        "name": "daamky:sounds/forestmorn/welcome",
+        "stream": false
+      }
+    ]
   }
 }
