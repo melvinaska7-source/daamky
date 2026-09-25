@@ -1,7 +1,5 @@
 package daamky.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import pydaamky.events.render.Render3DEvent;
@@ -66,7 +64,7 @@ public class AuroraModule extends Module {
             .I_method_c8c9a7d7(0.0f)
             .i_method_65e2aff7(100.0f)
             .II_method_b0f56334(1.0f)
-            .Ii_method_4e0e6b54(55.0f)
+            .Ii_method_4e0e6b54(35.0f)
             .I_method_bfc3b958(v -> "%");
 
         speed = new SliderSetting(this, "modules.settings.aurora.speed")
@@ -137,27 +135,14 @@ public class AuroraModule extends Module {
         shader.set("ColorA", ca.getRed() / 255.0f, ca.getGreen() / 255.0f, ca.getBlue() / 255.0f);
         shader.set("ColorB", cb.getRed() / 255.0f, cb.getGreen() / 255.0f, cb.getBlue() / 255.0f);
 
-        // additive glow поверх мира
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(
-            GlStateManager.SrcFactor.SRC_ALPHA,
-            GlStateManager.DstFactor.ONE
-        );
-        RenderSystem.depthMask(false);
-        RenderSystem.disableDepthTest();
-        RenderSystem.disableCull();
-
-        // fullscreen сам выставит Time/Resolution/InvViewProj/CamPos из event
+        // fullscreen() сам биндит Sampler0/Sampler1 (картинка + глубина мира)
+        // и выставляет Time/Resolution/InvViewProj/CamPos из event; шейдер сам
+        // складывает своё свечение с уже готовой картинкой — блендинг снаружи
+        // не нужен и даже вреден (fullscreen сам его выключает на время отрисовки).
         try {
             shader.fullscreen(event);
         } catch (Throwable t) {
             System.err.println("[Aurora] draw error: " + t.getMessage());
-        } finally {
-            RenderSystem.depthMask(true);
-            RenderSystem.enableDepthTest();
-            RenderSystem.enableCull();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.disableBlend();
         }
     }
 
@@ -212,6 +197,8 @@ public class AuroraModule extends Module {
         uniform vec3  ColorB;
         uniform mat4  InvViewProj;
         uniform vec3  CamPos;
+        uniform sampler2D Sampler0; // уже отрисованная картинка мира (цвет)
+        uniform sampler2D Sampler1; // буфер глубины мира
 
         float hash(vec2 p) {
             p = fract(p * vec2(123.34, 456.21));
@@ -249,19 +236,33 @@ public class AuroraModule extends Module {
         }
 
         void main() {
+            // база — уже отрисованный мир под нами. Мы ТОЛЬКО добавляем свечение
+            // поверх неё, никогда не перекрываем непрозрачным цветом/чёрным —
+            // это и убирает "пятна" и делает эффект настояще прозрачным.
+            vec3 base = texture(Sampler0, vUV).rgb;
+
+            // если в этот пиксель что-то отрисовано (гора, блок, игрок —
+            // глубина не на дальней плоскости), сияние там не рисуем вообще,
+            // чтобы оно не "просвечивало" сквозь рельеф.
+            float sceneDepth = texture(Sampler1, vUV).r;
+            if (sceneDepth < 0.999999) {
+                fragColor = vec4(base, 1.0);
+                return;
+            }
+
             vec3 rd = viewRay(vUV);
             float elev = rd.y;
 
             if (elev < 0.02) {
-                fragColor = vec4(0.0);
+                fragColor = vec4(base, 1.0);
                 return;
             }
 
-            float horizon = smoothstep(0.02, 0.18, elev);
-            float zenith  = 1.0 - smoothstep(Height, Height + 0.45, elev);
+            float horizon = smoothstep(0.02, 0.22, elev);
+            float zenith  = 1.0 - smoothstep(Height, Height + 0.5, elev);
             float skyMask = horizon * zenith;
             if (skyMask <= 0.001) {
-                fragColor = vec4(0.0);
+                fragColor = vec4(base, 1.0);
                 return;
             }
 
@@ -278,23 +279,27 @@ public class AuroraModule extends Module {
             float n2 = fbm(nUV * 1.7 + vec2(t * 0.15, -t * 0.08));
             float n3 = fbm(nUV * 3.1 + vec2(-t * 0.22, t * 0.05));
 
+            // мягкий переход вместо резкого контура — не "пятна", а дымка
             float curtain = n1 * 0.55 + n2 * 0.3 + n3 * 0.15;
-            curtain = pow(smoothstep(0.32, 0.85, curtain), 1.3);
+            curtain = pow(smoothstep(0.2, 0.95, curtain), 1.6);
 
             // вертикальные лучи-полосы внутри занавеса
-            float rays = pow(smoothstep(0.5, 0.95, fbm(vec2((along + fold) * 9.0, elev * 1.2 - t * 0.5))), 3.0) * 0.5;
+            float rays = pow(smoothstep(0.55, 0.98, fbm(vec2((along + fold) * 9.0, elev * 1.2 - t * 0.5))), 3.0) * 0.4;
 
-            float band2 = pow(smoothstep(0.55, 0.9, fbm(nUV * 2.3 + 10.0)), 2.0) * 0.5;
+            float band2 = pow(smoothstep(0.5, 0.95, fbm(nUV * 2.3 + 10.0)), 2.0) * 0.4;
             float glow = (curtain + band2 + rays) * skyMask;
+            glow *= 0.85 + 0.15 * sin(along * 4.0 + t);
 
             // цвет: у основания ColorA, к вершине подмешивается ColorB + лёгкое свечение
-            float mixF = clamp(elev / max(Height + 0.45, 0.01) + n2 * 0.3, 0.0, 1.0);
+            float mixF = clamp(elev / max(Height + 0.5, 0.01) + n2 * 0.3, 0.0, 1.0);
             vec3 col = mix(ColorA, ColorB, mixF);
             col = mix(col, vec3(1.0), rays * 0.25);
 
-            glow *= 0.85 + 0.15 * sin(along * 4.0 + t);
-
-            fragColor = vec4(col * glow * Intensity, glow * Intensity);
+            // ключевая часть: свечение ДОБАВЛЯЕТСЯ к уже нарисованному небу,
+            // а не заменяет его — поэтому эффект остаётся прозрачным на любой
+            // интенсивности и нигде не "закрашивает" чёрным.
+            vec3 result = base + col * glow * Intensity;
+            fragColor = vec4(result, 1.0);
         }
         """;
 }
