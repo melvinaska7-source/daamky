@@ -1,72 +1,44 @@
 {
   "clickgui_open": {
-    "sounds": [
-      "clickgui_open"
-    ]
+    "sounds": ["clickgui_open"]
   },
   "toggle": {
-    "sounds": [
-      "toggle"
-    ]
+    "sounds": ["toggle"]
   },
   "applepay": {
-    "sounds": [
-      "applepay"
-    ]
+    "sounds": ["applepay"]
   },
   "notification": {
-    "sounds": [
-      "notification"
-    ]
+    "sounds": ["notification"]
   },
   "welcome": {
-    "sounds": [
-      "welcome"
-    ]
+    "sounds": ["welcome"]
   },
   "typing": {
-    "sounds": [
-      "typing"
-    ]
+    "sounds": ["typing"]
   },
   "critical": {
-    "sounds": [
-      "critical"
-    ]
+    "sounds": ["critical"]
   },
   "forestmorn/ezz": {
-    "sounds": [
-      "forestmorn/ezz"
-    ]
+    "sounds": ["forestmorn/ezz"]
   },
   "forestmorn/tuda": {
-    "sounds": [
-      "forestmorn/tuda"
-    ]
+    "sounds": ["forestmorn/tuda"]
   },
   "forestmorn/daamkyboost": {
-    "sounds": [
-      "forestmorn/daamkyboost"
-    ]
+    "sounds": ["forestmorn/daamkyboost"]
   },
   "forestmorn/totem": {
-    "sounds": [
-      "forestmorn/totem"
-    ]
+    "sounds": ["forestmorn/totem"]
   },
   "forestmorn/sinshluhi": {
-    "sounds": [
-      "forestmorn/sinshluhi"
-    ]
+    "sounds": ["forestmorn/sinshluhi"]
   },
   "forestmorn/nespr": {
-    "sounds": [
-      "forestmorn/nespr"
-    ]
+    "sounds": ["forestmorn/nespr"]
   },
   "forestmorn/welcome": {
-    "sounds": [
-      "forestmorn/welcome"
-    ]
+    "sounds": ["forestmorn/welcome"]
   }
 }

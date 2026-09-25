@@ -2,6 +2,7 @@ package daamky.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,19 +47,36 @@ public class F5NickModule extends Module {
         }
 
         float tickDelta = event.getTickDelta();
+        // как у ванильных ников: высота модели + 0.5, а не высота глаз —
+        // иначе на голову заходит, что и было раньше.
         Vec3d pos = interpolatedPos(player, tickDelta)
-            .add(0.0, player.getStandingEyeHeight() + heightOffset.Ii_method_a20abcd2(), 0.0);
+            .add(0.0, player.getHeight() + 0.5 + heightOffset.Ii_method_a20abcd2(), 0.0);
 
         Vec2f screen = iIiiiiIII_Class377.I_method_211fc242(pos);
         if (screen == null) {
             return;
         }
 
-        Text label = showRank.i_method_9b12da03()
-            ? player.getDisplayName()
-            : Text.literal(I_field_3a9bda27.player.getGameProfile().getName());
+        Text label = showRank.i_method_9b12da03() ? resolveLabel(player) : Text.literal(player.getGameProfile().getName());
         drawLabel(event.getContext(), label, screen.x, screen.y);
     };
+
+    /**
+     * Привилегия/префикс ранга приходит с сервера — либо через scoreboard-команду
+     * (тогда её несёт {@link PlayerEntity#getDisplayName()}), либо через кастомное
+     * имя в таб-листе (многие плагины рангов красят только его). Пробуем оба
+     * источника: если сервер вообще не выдаёт префикс — покажется просто ник,
+     * это нормально и не баг клиента, добавить с нуля несуществующую привилегию нельзя.
+     */
+    private Text resolveLabel(PlayerEntity player) {
+        PlayerListEntry entry = I_field_3a9bda27.getNetworkHandler() != null
+            ? I_field_3a9bda27.getNetworkHandler().getPlayerListEntry(player.getUuid())
+            : null;
+        if (entry != null && entry.getDisplayName() != null) {
+            return entry.getDisplayName();
+        }
+        return player.getDisplayName();
+    }
 
     public F5NickModule() {
         initSettings();
@@ -85,10 +103,10 @@ public class F5NickModule extends Module {
             .Ii_method_4e0e6b54(1.0f);
 
         heightOffset = new SliderSetting(this, "modules.settings.f5nick.height")
-            .I_method_c8c9a7d7(0.0f)
+            .I_method_c8c9a7d7(-0.5f)
             .i_method_65e2aff7(1.0f)
             .II_method_b0f56334(0.05f)
-            .Ii_method_4e0e6b54(0.35f);
+            .Ii_method_4e0e6b54(0.0f); // 0 = ровно как у ванильных ников (height + 0.5)
     }
 
     private void drawLabel(CustomDrawContext context, Text label, float x, float y) {
