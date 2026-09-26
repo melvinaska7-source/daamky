@@ -59,6 +59,7 @@ import daamky.client.NoInteractModule;
 import daamky.client.NoPushModule;
 import daamky.client.NoRotateModule;
 import daamky.client.NukerModule;
+import daamky.client.SoundsModule;
 import daamky.client.PlayerUtilsModule;
 import daamky.client.ScaffoldModule;
 import daamky.client.StealerModule;
@@ -199,6 +200,7 @@ public class ModuleManager {
         this.registerModule(new BackTrackModule());
         this.registerModule(new HitboxesModule());
         this.registerModule(new ElytraTargetModule());
+        this.registerModule(new SoundsModule());
         this.registerModule(new CriticalsModule());
         this.registerModule(new AutoSoupModule());
         this.registerModule(new AutoSprintModule());
