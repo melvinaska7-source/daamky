@@ -47,10 +47,10 @@ public class F5NickModule extends Module {
         }
 
         float tickDelta = event.getTickDelta();
-        // как у ванильных ников: высота модели + 0.5, а не высота глаз —
-        // иначе на голову заходит, что и было раньше.
+        // чуть выше макушки: высота модели + 0.2 (ванильные 0.5 выглядят слишком высоко,
+        // т.к. здесь текст рисуется 2D от этой точки вниз, а не 3D-бильбордом)
         Vec3d pos = interpolatedPos(player, tickDelta)
-            .add(0.0, player.getHeight() + 0.5 + heightOffset.Ii_method_a20abcd2(), 0.0);
+            .add(0.0, player.getHeight() + 0.2 + heightOffset.Ii_method_a20abcd2(), 0.0);
 
         Vec2f screen = iIiiiiIII_Class377.I_method_211fc242(pos);
         if (screen == null) {
@@ -102,11 +102,11 @@ public class F5NickModule extends Module {
             .II_method_b0f56334(0.05f)
             .Ii_method_4e0e6b54(1.0f);
 
-        heightOffset = new SliderSetting(this, "modules.settings.f5nick.height")
+        heightOffset = new SliderSetting(this, "modules.settings.f5nick.height_offset")
             .I_method_c8c9a7d7(-0.5f)
             .i_method_65e2aff7(1.0f)
             .II_method_b0f56334(0.05f)
-            .Ii_method_4e0e6b54(0.0f); // 0 = ровно как у ванильных ников (height + 0.5)
+            .Ii_method_4e0e6b54(0.0f); // 0 = чуть выше макушки; старый ключ "height" сменён, чтобы сбросить сохранённое в конфиге значение
     }
 
     private void drawLabel(CustomDrawContext context, Text label, float x, float y) {
