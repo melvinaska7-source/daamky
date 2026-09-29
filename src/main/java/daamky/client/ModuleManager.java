@@ -14,7 +14,6 @@ import pydaamky.events.window.MouseEvent;
 import daamky.client.AntiAimModule;
 import daamky.client.AuroraModule;
 import daamky.client.AssistModule;
-import daamky.client.ForestMornModule;
 import daamky.client.AuctionModule;
 import daamky.client.F5NickModule;
 import daamky.client.AutoAcceptModule;
@@ -245,7 +244,6 @@ public class ModuleManager {
         this.registerModule(new AutoFarmModule());
         this.registerModule(new AutoInvisibleModule());
         this.registerModule(new ClickThroughModule());
-        this.registerModule(new ForestMornModule());
         this.registerModule(new MineHelperModule());
         this.registerModule(new TargetPearlModule());
         this.registerModule(new StealerModule());
